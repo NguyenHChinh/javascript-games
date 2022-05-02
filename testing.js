@@ -1,8 +1,6 @@
 var ctx = document.getElementById("canvas").getContext("2d");
 
 document.addEventListener('keydown', function(event) {
-    console.log(fives);
-    console.log(currentPos);
     fives[currentPos[0]][currentPos[1]] = 0;
 
     switch (event.keyCode) {
@@ -20,35 +18,39 @@ document.addEventListener('keydown', function(event) {
             break;
         // 'D' Key
         case 68:
-            if (currentPos[1] != 4) {
+            if (currentPos[1] != (gridSize - 1)) {
                 currentPos[1]++;
             }
             break;
         // 'S' Key
         case 83:
-            if (currentPos[0] != 4) {
+            if (currentPos[0] != (gridSize-1)) {
                 currentPos[0]++;
             }
             break;
     }
 
-    //fives[currentPos[0]][currentPos[1]] = 1;
-    console.log(fives[2][2]);
+    fives[currentPos[0]][currentPos[1]] = 1;
     drawGrid();
 });
 
-var gridSize = 5;
+var gridSize = 9;
+/*
 row = [];
 for (let i = 0; i < gridSize; i++) {
     row.push(0);
 }
 console.log(row);
+*/
 
 var fives = [];
 for (let i = 0; i < gridSize; i++) {
+    let row = [];
+    for (let j = 0; j < gridSize; j++) {
+        row.push(0);
+    }
     fives.push(row);
 }
-console.log(fives);
 
 /* fives when gridSize = 5, where gridSize is an array of arrays
 [[0, 0, 0, 0, 0],
@@ -58,7 +60,8 @@ console.log(fives);
  [0, 0, 0, 0, 0]]
 */
 
-currentPos = [Math.floor(row.length/2), Math.floor(row.length/2)];
+currentPos = [Math.floor(fives.length/2), Math.floor(fives.length/2)];
+fives[currentPos[0]][currentPos[1]] = 1;
 
 /*
 for (let i = 0; i < fives.length * 5; i++) {
@@ -105,7 +108,3 @@ function drawGrid() {
 }
 
 drawGrid();
-
-console.log(fives);
-//fives[2][2] = 1;
-console.log(fives);
