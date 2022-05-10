@@ -9,3 +9,18 @@ for (let i = 0; i < 3; i++) {
         ctx.stroke();
     }
 }
+
+for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+        let button = document.createElement("button");
+        button.id = "button" + j + i;
+        button.type = "submit";
+        button.className = "gridButtons button" + j + i;
+        button.style.position = "absolute";
+        button.style.height = 50 + "px";
+        button.style.width = 50 + "px";
+        button.style.left = 12 + (50 * i) + "px";
+        button.style.top = 12 + (50 * j) + "px";
+        document.body.appendChild(button);
+    }
+}
