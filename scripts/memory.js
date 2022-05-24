@@ -70,6 +70,17 @@ function addToSequence() {
     x = getRandomInt(gridSize);
     y = getRandomInt(gridSize);
     
+    final_x = correctSequence[correctSequence.length-1][0];
+    final_y = correctSequence[correctSequence.length-1][1];
+
+    console.log("(" + final_x + ", " + final_y + ")");
+    while (x == final_x && y == final_y) {
+        console.log("Repeat!");
+        x = getRandomInt(gridSize);
+        y = getRandomInt(gridSize);
+        console.log("(" + final_x + ", " + final_y + ")");
+    }
+
     let correctAnswer = [x, y];
     correctSequence.push(correctAnswer);
 }
