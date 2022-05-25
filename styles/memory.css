@@ -1,0 +1,17 @@
+#emoji {
+    position: absolute;
+    top: -160px;
+    left: 108px;
+    font-size: 240px;
+    transform: scale(1);
+    opacity: 100%;
+}
+
+#score {
+    position: absolute;
+    top: 500px;
+    left: 110px;
+    font-size: 40px;
+    transform: scale(1);
+    opacity: 100%;
+}

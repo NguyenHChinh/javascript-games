@@ -1,4 +1,6 @@
 var ctx = document.getElementById("canvas").getContext("2d");
+var deathScreen = document.getElementById("emoji");
+var finalScore = document.getElementById("score");
 gridSize = 3;
 squareSize = 150;
 
@@ -56,6 +58,21 @@ for (let i = 0; i < 3; i++) {
     }
 }
 
+let startButton = document.createElement("button");
+startButton.id = "startButton";
+startButton.type = "submit";
+startButton.style.position = "absolute";
+startButton.style.height = (squareSize - 10) / 2 + "px";
+startButton.style.width = squareSize * 3 - 10 + "px";
+startButton.style.left = "8px";
+startButton.style.top = "460px";
+startButton.innerHTML = "Start";
+startButton.onclick = function(e) {
+    deathScreen.textContent = "";
+    finalScore.textContent = "";
+    showOrder();
+}
+document.body.appendChild(startButton);
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -113,23 +130,25 @@ function gameMove(x, y) {
             currentSequence++;
         }
         else {
-            console.log("Ahh.. you fucked up");
             active_game = 0;
+            deathScreen.textContent += "❌";
+            finalScore.textContent += "Final Score: ";
+            finalScore.textContent += correctSequence.length - 1;
         }
     }
 
     if (currentSequence == correctSequence.length) {
         addToSequence();
+        active_game = 0;
         showOrder();
     }
 }
 
 function main() {
-    active_game = 1;
+    active_game = 0;
     currentSequence = 0;
     correctSequence.push([getRandomInt(gridSize), getRandomInt(gridSize)]);
-
-    showOrder();
+    deathScreen.parentNode.appendChild(deathScreen);
 }
 
 main();
