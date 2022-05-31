@@ -95,30 +95,37 @@ function addToSequence() {
     x = getRandomInt(gridSize);
     y = getRandomInt(gridSize);
     
-    console.log("error?");
     final_x = correctSequence[correctSequence.length-1][0];
     final_y = correctSequence[correctSequence.length-1][1];
 
-    console.log("(" + final_x + ", " + final_y + ")");
     while (x == final_x && y == final_y) {
-        console.log("Repeat!");
         x = getRandomInt(gridSize);
         y = getRandomInt(gridSize);
-        console.log("(" + final_x + ", " + final_y + ")");
     }
 
     let correctAnswer = [x, y];
     correctSequence.push(correctAnswer);
 }
 
-async function showOrder() {
+function buttonSwitch(on) {
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             let buttonName = "button" + j + i;
             let buttonTarget = document.getElementById(buttonName);
-            buttonTarget.disabled = true;
+
+            if (on) {
+                buttonTarget.disabled = false;
+            }
+            else {
+                buttonTarget.disabled = true;
+            }
         }
     }
+}
+
+async function showOrder() {
+    buttonSwitch(0);
+
     active_game = 0;
     counter = 0;
     do {
@@ -134,13 +141,7 @@ async function showOrder() {
     active_game = 1;
     currentSequence = 0;
 
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            let buttonName = "button" + j + i;
-            let buttonTarget = document.getElementById(buttonName);
-            buttonTarget.disabled = false;
-        }
-    }
+    buttonSwitch(1);
 
     updateProgress(0);
 }
@@ -165,6 +166,7 @@ function gameMove(x, y) {
         finalScore.textContent += correctSequence.length - 1;
         document.getElementById("startButton").disabled = false;
         correctSequence = [];
+        buttonSwitch(0);
         return;
     }
 
@@ -180,6 +182,8 @@ function main() {
 
     visualDiv = document.getElementById("visualDiv");
     visualDiv.parentNode.appendChild(visualDiv);
+
+    progressObject.textContent = "Progress: N/A";
 }
 
 main();
