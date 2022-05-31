@@ -1,6 +1,9 @@
 var ctx = document.getElementById("canvas").getContext("2d");
 var deathScreen = document.getElementById("emoji");
 var finalScore = document.getElementById("score");
+var buttonDiv = document.getElementById("buttonDiv");
+var progressObject = document.getElementById("progress");
+var active_game = 0;
 gridSize = 3;
 squareSize = 150;
 
@@ -68,9 +71,14 @@ startButton.style.left = "8px";
 startButton.style.top = "460px";
 startButton.innerHTML = "Start";
 startButton.onclick = function(e) {
+    active_game = 0;
+    currentSequence = 0;
+    correctSequence.push([getRandomInt(gridSize), getRandomInt(gridSize)]);
     deathScreen.textContent = "";
     finalScore.textContent = "";
+    this.disabled = true;
     showOrder();
+    
 }
 document.body.appendChild(startButton);
 
@@ -87,6 +95,7 @@ function addToSequence() {
     x = getRandomInt(gridSize);
     y = getRandomInt(gridSize);
     
+    console.log("error?");
     final_x = correctSequence[correctSequence.length-1][0];
     final_y = correctSequence[correctSequence.length-1][1];
 
@@ -103,7 +112,13 @@ function addToSequence() {
 }
 
 async function showOrder() {
-    await sleep(500);
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            let buttonName = "button" + j + i;
+            let buttonTarget = document.getElementById(buttonName);
+            buttonTarget.disabled = true;
+        }
+    }
     active_game = 0;
     counter = 0;
     do {
@@ -118,6 +133,20 @@ async function showOrder() {
     drawGrid(-1, -1);
     active_game = 1;
     currentSequence = 0;
+
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            let buttonName = "button" + j + i;
+            let buttonTarget = document.getElementById(buttonName);
+            buttonTarget.disabled = false;
+        }
+    }
+
+    updateProgress(0);
+}
+
+function updateProgress(current) {
+    progressObject.textContent = "Progress: " + current + "/" + correctSequence.length;
 }
 
 function gameMove(x, y) {
@@ -125,16 +154,18 @@ function gameMove(x, y) {
         return;
     }
 
-    if (active_game) {
-        if ((x == correctSequence[currentSequence][0]) && (y == correctSequence[currentSequence][1])) {
-            currentSequence++;
-        }
-        else {
-            active_game = 0;
-            deathScreen.textContent += "❌";
-            finalScore.textContent += "Final Score: ";
-            finalScore.textContent += correctSequence.length - 1;
-        }
+    if ((x == correctSequence[currentSequence][0]) && (y == correctSequence[currentSequence][1])) {
+        currentSequence++;
+        updateProgress(currentSequence);
+    }
+    else {
+        active_game = 0;
+        deathScreen.textContent += "❌";
+        finalScore.textContent += "Final Score: ";
+        finalScore.textContent += correctSequence.length - 1;
+        document.getElementById("startButton").disabled = false;
+        correctSequence = [];
+        return;
     }
 
     if (currentSequence == correctSequence.length) {
@@ -145,10 +176,10 @@ function gameMove(x, y) {
 }
 
 function main() {
-    active_game = 0;
-    currentSequence = 0;
-    correctSequence.push([getRandomInt(gridSize), getRandomInt(gridSize)]);
     deathScreen.parentNode.appendChild(deathScreen);
+
+    visualDiv = document.getElementById("visualDiv");
+    visualDiv.parentNode.appendChild(visualDiv);
 }
 
 main();
