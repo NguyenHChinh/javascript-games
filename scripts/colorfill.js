@@ -7,6 +7,11 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+// Sleep function
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Grid will be a 7 blocks tall, and 8 blocks wide
 for (let i = 0; i < 7; i++) {
     let row = [];
@@ -15,6 +20,52 @@ for (let i = 0; i < 7; i++) {
         row.push(color);
     }
     gameGrid.push(row);
+}
+
+// Recursive function that will make sure that no colors are next to each other
+function fixGrid() {
+    // Switch variable for recursion
+    // Essentially, this function will run until the whole grid is considered "safe" (no fixes to be done)
+    let duplicate = 0;
+
+    for (let i = 0; i < gameGrid.length; i++) {
+        for (let j = 0; j < gameGrid[0].length; j++) {
+            console.log("Now at.. (" + i + ", " + j + ")" + " with a color of " + gameGrid[i][j]);
+            // Check Left
+            if (j != 0) {
+                if (gameGrid[i][j] == (gameGrid[i][j-1])) {
+                    duplicate = 1;
+                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                }
+            }
+            // Check Up
+            if (i != 0) {
+                if (gameGrid[i][j] == (gameGrid[i-1][j])) {
+                    duplicate = 1;
+                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                }
+            }
+            // Check Right
+            if (j != gameGrid[0].length - 1) {
+                if (gameGrid[i][j] == (gameGrid[i][j+1])) {
+                    duplicate = 1;
+                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                }
+            }
+            // Check Down
+            if (i != gameGrid.length - 1) {
+                if (gameGrid[i][j] == (gameGrid[i+1][j])) {
+                    duplicate = 1;
+                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                }
+            }
+            drawGrid(gameGrid);
+        }
+    }
+
+    if (duplicate) {
+        fixGrid();
+    }
 }
 
 function drawGrid(grid) {
@@ -39,3 +90,4 @@ function drawGrid(grid) {
 
 console.log(gameGrid);
 drawGrid(gameGrid);
+fixGrid();
