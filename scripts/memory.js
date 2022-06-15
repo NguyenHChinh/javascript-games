@@ -184,6 +184,8 @@ function main() {
     visualDiv.parentNode.appendChild(visualDiv);
 
     progressObject.textContent = "Progress: N/A";
+
+    buttonSwitch(0);
 }
 
 main();
