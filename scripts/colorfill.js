@@ -1,6 +1,8 @@
 var ctx = document.getElementById("canvas").getContext("2d");
 var gameGrid = [];
+var playerGrid = [];
 var colorOptions = ["cyan", "lime", "red", "yellow", "black", "violet"];
+playerMoves = 0;
 
 // Random integer generator
 function getRandomInt(max) {
@@ -13,9 +15,9 @@ function sleep(ms) {
 }
 
 // Grid will be a 7 blocks tall, and 8 blocks wide
-for (let i = 0; i < 7; i++) {
+for (let i = 0; i < 9; i++) {
     let row = [];
-    for (let j = 0; j < 8; j++) {
+    for (let j = 0; j < 9; j++) {
         let color = colorOptions[getRandomInt(6)];
         row.push(color);
     }
@@ -30,7 +32,6 @@ function fixGrid() {
 
     for (let i = 0; i < gameGrid.length; i++) {
         for (let j = 0; j < gameGrid[0].length; j++) {
-            console.log("Now at.. (" + i + ", " + j + ")" + " with a color of " + gameGrid[i][j]);
             // Check Left
             if (j != 0) {
                 if (gameGrid[i][j] == (gameGrid[i][j-1])) {
@@ -88,6 +89,124 @@ function drawGrid(grid) {
     }
 }
 
+function drawButtons() {
+    let buttonColors = ["cyan", "lime", "red", "yellow", "black", "violet"];
+    for (let i = 0; i < buttonColors.length; i++) {
+        startX = (i * 60) + 50;
+
+        ctx.beginPath();
+        ctx.rect(
+            startX,
+            gameGrid.length * 50 + 20,
+            50,
+            50);
+        ctx.fillStyle = buttonColors[i];
+        ctx.strokeRect(
+            startX,
+            gameGrid.length * 50 + 20,
+            50,
+            50);
+        ctx.fillStyle = buttonColors[i];
+        ctx.strokeStyle = "black";
+        ctx.fill();
+    }
+}
+
+// Creation of playerGrid, used to keep track of what blocks belong to the player
+for (let i = 0; i < gameGrid.length; i++) {
+    let row = [];
+    for (let j = 0; j < gameGrid[0].length; j++) {
+        row.push(0);
+    }
+    playerGrid.push(row);
+}
+playerGrid[4][4] = 1;
+
+// Creating "invisible" buttons that will serve to change the player blocks
+for (let i = 0; i < 6; i++) {
+    let button = document.createElement("button");
+    button.id = "button" + i
+    button.type = "submit";
+    button.className = "gridButtons button" + i;
+    button.style.position = "absolute";
+    button.style.height = 50 + "px";
+    button.style.width = 50 + "px";
+    button.style.left = 58 + (60 * i) + "px";
+    button.style.top = 478 + "px";
+    button.style.opacity = 0 + "%";
+    button.onclick = function(e) {
+        playerMoves++;
+        gameMove(i);
+    }
+    document.body.appendChild(button);
+}
+
+function colorSwitch(choice) {
+    for (let i = 0; i < gameGrid.length; i++) {
+        for (let j = 0; j < gameGrid[0].length; j++) {
+            if (playerGrid[i][j]) {
+                gameGrid[i][j] = colorOptions[choice]
+            }
+        }
+    }
+    drawGrid(gameGrid);
+}
+
+function updatePlayerGrid(choice) {
+    for (let i = 0; i < gameGrid.length; i++) {
+        for (let j = 0; j < gameGrid[0].length; j++) {
+            if (playerGrid[i][j]) {
+                // Check Left
+                if (j != 0) {
+                    if (gameGrid[i][j] == (gameGrid[i][j-1])) {
+                        playerGrid[i][j-1] = 1;
+                    }
+                }
+                // Check Up
+                if (i != 0) {
+                    if (gameGrid[i][j] == (gameGrid[i-1][j])) {
+                        playerGrid[i-1][j] = 1;
+                    }
+                }
+                // Check Right
+                if (j != gameGrid[0].length - 1) {
+                    if (gameGrid[i][j] == (gameGrid[i][j+1])) {
+                        playerGrid[i][j+1] = 1;
+                    }
+                }
+                // Check Down
+                if (i != gameGrid.length - 1) {
+                    if (gameGrid[i][j] == (gameGrid[i+1][j])) {
+                        playerGrid[i+1][j] = 1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function gameWin() {
+    for (let i = 0; i < playerGrid.length; i++) {
+        for (let j = 0; j < playerGrid[0].length; j++) {
+            if (playerGrid[i][j] == 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+async function gameMove(choice) {
+    colorSwitch(choice);
+    updatePlayerGrid(choice);
+    if (gameWin()) {
+        drawGrid(gameGrid);
+        await sleep(10);
+        window.alert("Congratulations! You beat the game in " + playerMoves + " turns!");
+    }
+}
+
 console.log(gameGrid);
-drawGrid(gameGrid);
+drawGrid(gameGrid); 
 fixGrid();
+drawButtons();
