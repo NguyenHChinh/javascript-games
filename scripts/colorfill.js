@@ -1,3 +1,4 @@
+// Necessary variables to set up the project
 var ctx = document.getElementById("canvas").getContext("2d");
 var gameGrid = [];
 var playerGrid = [];
@@ -69,19 +70,23 @@ function fixGrid() {
     }
 }
 
+// Uses canvas object to draw each rectangle
 function drawGrid(grid) {
     for (let i = 0; i < grid.length; i++) {
         for (let j = 0; j < grid[0].length; j++) {
+            // Top left of each square
             startX = j * 50;
             startY = i * 50;
         
+            // Creatiion of rectangle
             ctx.beginPath();
             ctx.rect(
                 startX,
                 startY,
                 50,
                 50);
-
+            
+            // Uses 2D array grid to fill in the appropriate color
             ctx.fillStyle = grid[i][j];
         
             ctx.fill();
@@ -89,11 +94,13 @@ function drawGrid(grid) {
     }
 }
 
+// Function to create the six colored squares that will be the "buttons"
 function drawButtons() {
     let buttonColors = ["cyan", "lime", "red", "yellow", "black", "violet"];
     for (let i = 0; i < buttonColors.length; i++) {
         startX = (i * 60) + 50;
 
+        // Rectangle
         ctx.beginPath();
         ctx.rect(
             startX,
@@ -101,6 +108,8 @@ function drawButtons() {
             50,
             50);
         ctx.fillStyle = buttonColors[i];
+        // Rectangle outline
+        ctx.lineWidth = 2;
         ctx.strokeRect(
             startX,
             gameGrid.length * 50 + 20,

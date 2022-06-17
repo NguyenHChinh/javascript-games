@@ -5,9 +5,9 @@ This project/repository will include basic games and game-like simulations made 
 # Games
 - Memory Game
 - Rock Paper Scissors
+- Color Fill
 
 # TO-DO (in no particular order)
-- Color Fill
 - Tic Tac Toe
 - Snake 
 - Connect Four
