@@ -137,13 +137,25 @@ for (let i = 0; i < 6; i++) {
     button.onclick = function(e) {
         playerMoves++;
         gameMove(i);
+        buttonSwitch(i);
     }
     document.body.appendChild(button);
 }
 
+function buttonSwitch(choice) {
+    // Turns on all buttons first
+    for (let i = 0; i < 6; i++) {
+        document.getElementById("button" + i).disabled = false;
+    }
+
+    document.getElementById("button" + choice).disabled = true;
+}
+
+// Changing the color of the squares the player has already obtained
 function colorSwitch(choice) {
     for (let i = 0; i < gameGrid.length; i++) {
         for (let j = 0; j < gameGrid[0].length; j++) {
+            // Since our tracker grid is just 0's and 1's, a simple check is all that's needed
             if (playerGrid[i][j]) {
                 gameGrid[i][j] = colorOptions[choice]
             }
@@ -152,6 +164,8 @@ function colorSwitch(choice) {
     drawGrid(gameGrid);
 }
 
+// In essence, if a square matches the color of a player-owned square (of the new color), it gets added
+// to the existing player-owned square 2D array
 function updatePlayerGrid(choice) {
     for (let i = 0; i < gameGrid.length; i++) {
         for (let j = 0; j < gameGrid[0].length; j++) {
@@ -185,6 +199,7 @@ function updatePlayerGrid(choice) {
     }
 }
 
+// Runs through entire grid and checks to see if player owns all squares or not
 function gameWin() {
     for (let i = 0; i < playerGrid.length; i++) {
         for (let j = 0; j < playerGrid[0].length; j++) {
@@ -196,9 +211,11 @@ function gameWin() {
     return true;
 }
 
+// Function utilized from each button to execute game move
 async function gameMove(choice) {
     colorSwitch(choice);
     updatePlayerGrid(choice);
+
     if (gameWin()) {
         drawGrid(gameGrid);
         await sleep(10);
@@ -206,7 +223,17 @@ async function gameMove(choice) {
     }
 }
 
-console.log(gameGrid);
-drawGrid(gameGrid); 
-fixGrid();
-drawButtons();
+// Main Function
+function main() {
+    console.log(gameGrid);
+    drawGrid(gameGrid); 
+    fixGrid();
+    drawButtons();
+    let startingColor = gameGrid[4][4];
+    let indexOfStartingColor = colorOptions.indexOf(startingColor);
+    console.log(startingColor);
+    console.log(indexOfStartingColor);
+    document.getElementById("button" + indexOfStartingColor).disabled = true;
+}
+
+main();
