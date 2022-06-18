@@ -1,8 +1,18 @@
+// GAME SETUP (CHANGEABLE)
+var colorOptions = ["cyan", "lime", "red", "yellow", "black", "violet"];
+var gridHeight = 9;
+var gridWidth = 9; // ONLY ODD NUMBERS PLEASE
+
+// Safe-check (will be removed later)
+if (gridWidth % 2 == 0 || gridHeight % 2 == 0) {
+    window.alert("Error! Grid width/height shouldn't be an even number..");
+}
+
 // Necessary variables to set up the project
 var ctx = document.getElementById("canvas").getContext("2d");
+var colors = colorOptions.length;
 var gameGrid = [];
 var playerGrid = [];
-var colorOptions = ["cyan", "lime", "red", "yellow", "black", "violet"];
 playerMoves = 0;
 
 // Random integer generator
@@ -16,14 +26,22 @@ function sleep(ms) {
 }
 
 // Grid will be a 7 blocks tall, and 8 blocks wide
-for (let i = 0; i < 9; i++) {
-    let row = [];
-    for (let j = 0; j < 9; j++) {
-        let color = colorOptions[getRandomInt(6)];
-        row.push(color);
+function createGrid() {
+    gameGrid = [];
+
+    for (let i = 0; i < gridHeight; i++) {
+        let row = [];
+        for (let j = 0; j < gridWidth; j++) {
+            let color = colorOptions[getRandomInt(colors)];
+            row.push(color);
+        }
+        gameGrid.push(row);
     }
-    gameGrid.push(row);
+
+    fixGrid();
+    drawGrid(gameGrid);
 }
+createGrid();
 
 // Recursive function that will make sure that no colors are next to each other
 function fixGrid() {
@@ -37,30 +55,31 @@ function fixGrid() {
             if (j != 0) {
                 if (gameGrid[i][j] == (gameGrid[i][j-1])) {
                     duplicate = 1;
-                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                    gameGrid[i][j] = colorOptions[getRandomInt(colors)];
                 }
             }
             // Check Up
             if (i != 0) {
                 if (gameGrid[i][j] == (gameGrid[i-1][j])) {
                     duplicate = 1;
-                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                    gameGrid[i][j] = colorOptions[getRandomInt(colors)];
                 }
             }
             // Check Right
             if (j != gameGrid[0].length - 1) {
                 if (gameGrid[i][j] == (gameGrid[i][j+1])) {
                     duplicate = 1;
-                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                    gameGrid[i][j] = colorOptions[getRandomInt(colors)];
                 }
             }
             // Check Down
             if (i != gameGrid.length - 1) {
                 if (gameGrid[i][j] == (gameGrid[i+1][j])) {
                     duplicate = 1;
-                    gameGrid[i][j] = colorOptions[getRandomInt(6)];
+                    gameGrid[i][j] = colorOptions[getRandomInt(colors)];
                 }
             }
+
             drawGrid(gameGrid);
         }
     }
@@ -98,7 +117,7 @@ function drawGrid(grid) {
 function drawButtons() {
     let buttonColors = ["cyan", "lime", "red", "yellow", "black", "violet"];
     for (let i = 0; i < buttonColors.length; i++) {
-        startX = (i * 60) + 50;
+        startX = (i * 60) + 50 + ((gridWidth - 9) * 25);
 
         // Rectangle
         ctx.beginPath();
@@ -122,17 +141,25 @@ function drawButtons() {
 }
 
 // Creation of playerGrid, used to keep track of what blocks belong to the player
-for (let i = 0; i < gameGrid.length; i++) {
-    let row = [];
-    for (let j = 0; j < gameGrid[0].length; j++) {
-        row.push(0);
+
+function createPlayerGrid() {
+    playerGrid = [];
+
+    for (let i = 0; i < gameGrid.length; i++) {
+        let row = [];
+        for (let j = 0; j < gameGrid[0].length; j++) {
+            row.push(0);
+        }
+        playerGrid.push(row);
     }
-    playerGrid.push(row);
+    
+    playerGrid[parseInt(gridHeight / 2)][parseInt(gridWidth / 2)] = 1;
 }
-playerGrid[4][4] = 1;
+createPlayerGrid();
+
 
 // Creating "invisible" buttons that will serve to change the player blocks
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < colors; i++) {
     let button = document.createElement("button");
     button.id = "button" + i
     button.type = "submit";
@@ -140,8 +167,8 @@ for (let i = 0; i < 6; i++) {
     button.style.position = "absolute";
     button.style.height = 50 + "px";
     button.style.width = 50 + "px";
-    button.style.left = 58 + (60 * i) + "px";
-    button.style.top = 478 + "px";
+    button.style.left = ((gridWidth - 9) * 25) + 58 + (60 * i) + "px";
+    button.style.top = (gameGrid.length * 50) + 28 + "px";
     button.style.opacity = 0 + "%";
     button.onclick = function(e) {
         playerMoves++;
@@ -151,9 +178,28 @@ for (let i = 0; i < 6; i++) {
     document.body.appendChild(button);
 }
 
+if (1) {
+    let button = document.createElement("button");
+    button.id = "buttonReset";
+    button.type = "submit";
+    button.innerHTML = "Restart";
+    button.style.position = "absolute";
+    button.style.height = 50 + "px";
+    button.style.width = 352 + "px";
+    button.style.left = ((gridWidth - 8) * 50) + 7 + "px";
+    button.style.top = (gameGrid.length * 50) + 88 + "px";
+    button.style.opacity = 100 + "%";
+    button.onclick = function(e) {
+        playerMoves = 0;
+        createPlayerGrid();
+        createGrid();
+    }
+    document.body.appendChild(button);
+} 
+
 function buttonSwitch(choice) {
     // Turns on all buttons first
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < colors; i++) {
         document.getElementById("button" + i).disabled = false;
     }
 
@@ -229,19 +275,18 @@ async function gameMove(choice) {
         drawGrid(gameGrid);
         await sleep(10);
         window.alert("Congratulations! You beat the game in " + playerMoves + " turns!");
+        
     }
 }
 
+
+
 // Main Function
 function main() {
-    console.log(gameGrid);
-    drawGrid(gameGrid); 
-    fixGrid();
+    createGrid();
     drawButtons();
     let startingColor = gameGrid[4][4];
     let indexOfStartingColor = colorOptions.indexOf(startingColor);
-    console.log(startingColor);
-    console.log(indexOfStartingColor);
     document.getElementById("button" + indexOfStartingColor).disabled = true;
 }
 
