@@ -1,6 +1,6 @@
 // GAME SETUP (CHANGEABLE)
 var colorOptions = ["cyan", "lime", "red", "yellow", "black", "violet"];
-var gridHeight = 9;
+var gridHeight = 9; // ONLY ODD NUMBERS PLEASE
 var gridWidth = 9; // ONLY ODD NUMBERS PLEASE
 
 // Safe-check (will be removed later)
@@ -41,7 +41,6 @@ function createGrid() {
     fixGrid();
     drawGrid(gameGrid);
 }
-createGrid();
 
 // Recursive function that will make sure that no colors are next to each other
 function fixGrid() {
@@ -141,7 +140,6 @@ function drawButtons() {
 }
 
 // Creation of playerGrid, used to keep track of what blocks belong to the player
-
 function createPlayerGrid() {
     playerGrid = [];
 
@@ -155,38 +153,39 @@ function createPlayerGrid() {
     
     playerGrid[parseInt(gridHeight / 2)][parseInt(gridWidth / 2)] = 1;
 }
-createPlayerGrid();
-
 
 // Creating "invisible" buttons that will serve to change the player blocks
-for (let i = 0; i < colors; i++) {
-    let button = document.createElement("button");
-    button.id = "button" + i
-    button.type = "submit";
-    button.className = "gridButtons button" + i;
-    button.style.position = "absolute";
-    button.style.height = 50 + "px";
-    button.style.width = 50 + "px";
-    button.style.left = ((gridWidth - 9) * 25) + 58 + (60 * i) + "px";
-    button.style.top = (gameGrid.length * 50) + 28 + "px";
-    button.style.opacity = 0 + "%";
-    button.onclick = function(e) {
-        playerMoves++;
-        gameMove(i);
-        buttonSwitch(i);
+function createButtons() {
+    for (let i = 0; i < colors; i++) {
+        let button = document.createElement("button");
+        button.id = "button" + i
+        button.type = "submit";
+        button.className = "gridButtons button" + i;
+        button.style.position = "absolute";
+        button.style.height = 50 + "px";
+        button.style.width = 50 + "px";
+        button.style.left = ((gridWidth - 9) * 25) + 58 + (60 * i) + "px";
+        button.style.top = (gameGrid.length * 50) + 23 + "px";
+        button.style.opacity = 0 + "%";
+        button.onclick = function(e) {
+            playerMoves++;
+            gameMove(i);
+            buttonSwitch(i);
+        }
+        document.body.appendChild(button);
     }
-    document.body.appendChild(button);
 }
 
-if (1) {
+// Creating restart button that will reset the grid to fresh state
+function createRestartButton() {
     let button = document.createElement("button");
-    button.id = "buttonReset";
+    button.id = "buttonRestart";
     button.type = "submit";
     button.innerHTML = "Restart";
     button.style.position = "absolute";
     button.style.height = 50 + "px";
     button.style.width = 352 + "px";
-    button.style.left = ((gridWidth - 8) * 50) + 7 + "px";
+    button.style.left = ((gridWidth - 8) * 25) + 32 + "px";
     button.style.top = (gameGrid.length * 50) + 88 + "px";
     button.style.opacity = 100 + "%";
     button.onclick = function(e) {
@@ -197,6 +196,7 @@ if (1) {
     document.body.appendChild(button);
 } 
 
+// Function that is used to disable/enable buttons
 function buttonSwitch(choice) {
     // Turns on all buttons first
     for (let i = 0; i < colors; i++) {
@@ -275,16 +275,16 @@ async function gameMove(choice) {
         drawGrid(gameGrid);
         await sleep(10);
         window.alert("Congratulations! You beat the game in " + playerMoves + " turns!");
-        
     }
 }
-
-
 
 // Main Function
 function main() {
     createGrid();
+    createPlayerGrid();
+    createButtons();
     drawButtons();
+    createRestartButton();
     let startingColor = gameGrid[4][4];
     let indexOfStartingColor = colorOptions.indexOf(startingColor);
     document.getElementById("button" + indexOfStartingColor).disabled = true;
