@@ -10,6 +10,7 @@ if (gridWidth % 2 == 0 || gridHeight % 2 == 0) {
 
 // Necessary variables to set up the project
 var ctx = document.getElementById("canvas").getContext("2d");
+var ws = document.getElementById("white_square").getContext("2d");
 var colors = colorOptions.length;
 var gameGrid = [];
 var playerGrid = [];
@@ -96,7 +97,7 @@ function drawGrid(grid) {
             startX = j * 50;
             startY = i * 50;
         
-            // Creatiion of rectangle
+            // Creation of rectangle
             ctx.beginPath();
             ctx.rect(
                 startX,
@@ -278,6 +279,56 @@ async function gameMove(choice) {
     }
 }
 
+async function highlightCenter(opacity_value, direction) {
+    centerX = parseInt(gameGrid[0].length / 2);
+    centerY = parseInt(gameGrid.length / 2);
+
+    lower_bound = 0.2;
+    upper_bound = 0.6;
+
+    switch (gameGrid[centerY][centerX]) {
+        case 'yellow':
+        case 'cyan':
+        case 'lime':
+            lower_bound = 0.4;
+            upper_bound = 0.8;
+            break;
+    }
+
+    while (playerMoves == 0) {
+        // Clearing canvas
+        ws.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Creation of rectangle
+        ws.beginPath();
+        ws.rect(
+            centerX * 50,
+            centerY * 50,
+            50,
+            50);
+        
+        // Uses 2D array grid to fill in the appropriate color
+        ws.fillStyle = "white";
+        ws.globalAlpha = opacity_value;
+        ws.fill();
+    
+        if (opacity_value < lower_bound || opacity_value > upper_bound) {
+            direction = !direction;
+        }
+    
+        if (direction) {
+            opacity_value += 0.01;
+        }
+        else {
+            opacity_value -= 0.01;
+        }
+
+        await sleep(10);
+    }
+
+    ws.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 // Main Function
 function main() {
     createGrid();
@@ -288,6 +339,7 @@ function main() {
     let startingColor = gameGrid[4][4];
     let indexOfStartingColor = colorOptions.indexOf(startingColor);
     document.getElementById("button" + indexOfStartingColor).disabled = true;
+    highlightCenter(0.4, true);
 }
 
 main();

@@ -1,0 +1,10 @@
+#wrapper{
+    position:relative;
+    width:1980px;
+    height:1000px;
+}
+#white_square,#canvas{
+    position:absolute; top:0px; left:0px;
+    width:1980px;
+    height:1000px;
+}
